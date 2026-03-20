@@ -1,13 +1,14 @@
+Rubic: https://stthomas.instructure.com/courses/86777/files/11732922?wrap=1
+
 What kind of game are we making?
 
 What do we hope to implement?
 - DOM manipulation
-- Event handling
-- Data management
-- User experience design (accessibility and responsive web design).
-Rubic: https://stthomas.instructure.com/courses/86777/files/11732922?wrap=1
+- Event handling: Hint system
+- Data management: Point system
+- User experience design (accessibility and responsive web design)
 
 What are our roles?
-Alex - Pixel art
+- Alex: Pixel art
 - UI Design
 - Back End HTML
