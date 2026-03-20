@@ -1,0 +1,17 @@
+/*  Paste into stylesheet 
+    OR add into html as:    <link rel="stylesheet" href="grid.css"
+    Feel free to modify to your liking */
+#grid {
+  align-items: center;
+  justify-content: center;
+  background-color: #ff000000;
+  /* The grid layout is handled dynamically in JS */
+}
+.grid-cell {
+  width: 16px;
+  height: 16px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  cursor: pointer;
+}
