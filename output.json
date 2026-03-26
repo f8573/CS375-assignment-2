@@ -120,10 +120,10 @@
   },
   "sustainability": {
     "easy": [
-      { "question": "Turning off lights when leaving a room conserves energy.", "options": ["True", "False", "Not Sure"], "correct": 0 },
-      { "question": "Recycling helps reduce landfill waste.", "options": ["True", "False", "Not Sure"], "correct": 0 },
-      { "question": "Watering plants in the middle of the day is the most water-efficient.", "options": ["True", "False", "Not Sure"], "correct": 1 },
-      { "question": "Keeping blinds closed during the hottest parts of the day to limit excess heat in the summer is a way to conserve energy.", "options": ["True", "False", "Not Sure"], "correct": 0 }
+      { "question": "Turning off lights when leaving a room conserves energy.", "options": ["True", "False"], "correct": 0 },
+      { "question": "Recycling helps reduce landfill waste.", "options": ["True", "False"], "correct": 0 },
+      { "question": "Watering plants in the middle of the day is the most water-efficient.", "options": ["True", "False"], "correct": 1 },
+      { "question": "Keeping blinds closed during the hottest parts of the day to limit excess heat in the summer is a way to conserve energy.", "options": ["True", "False"], "correct": 0 }
     ],
     "medium": [
       { "question": "Which of the following is a renewable energy source?", "options": ["Coal", "Solar", "Oil"], "correct": 1 },
@@ -133,9 +133,9 @@
     ],
     "hard": [
       { "question": "Which material is biodegradable?", "options": ["Plastic", "Paper", "Glass"], "correct": 1 },
-      { "question": "Recycling helps reduce landfill waste.", "options": ["True", "False", "Not Sure"], "correct": 0 },
+      { "question": "Recycling helps reduce landfill waste.", "options": ["True", "False"], "correct": 0 },
       { "question": "Which of the following is a is renewable energy source?", "options": ["Coal", "Gas", "Solar"], "correct": 2 },
-      { "question": "Turning off lights when not in a room conserves energy.", "options": ["True", "False", "Not Sure"], "correct": 0 }
+      { "question": "Turning off lights when not in a room conserves energy.", "options": ["True", "False"], "correct": 0 }
     ]
   }
 }

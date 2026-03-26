@@ -7,7 +7,7 @@ let highScore = Number(localStorage.getItem("highScore")) || 0;
 
 // Timer for Hard Mode:
 let timer;
-let timeLeft = 15;
+let timeLeft = 5;
 
 let readingMode = false;
 let sustainabilityMode = false;
@@ -123,7 +123,7 @@ function chooseCategory(category) {
 // ----- TIMER (FOR HARD LEVELS) -----
 function startTimer() {
   clearInterval(timer);
-  timeLeft = 15;
+  timeLeft = 5;
 
   document.getElementById("timerText").textContent = "Time: " + timeLeft;
 
