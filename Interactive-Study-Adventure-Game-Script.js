@@ -3,16 +3,21 @@ let currentLevel = "";
 let questions = [];
 let currentQuestionIndex = 0;
 let score = 0;
-let highScore = Number(localStorage.getItem("highScore")) || 0; // Reset High Score
+let highScore = Number(localStorage.getItem("highScore")) || 0;
+
 // Timer for Hard Mode:
-let timer;  // stores setInterval (timer) reference
-let timeLeft = 15; // seconds per question
+let timer;
+let timeLeft = 15;
+
 let readingMode = false;
 let sustainabilityMode = false;
+let artMode = false; // NEW (for art feature)
+
 let answered = false;
 let correctIndex = -1;
 let currentStory = "";
 let allQuestionsData = {}; // Store all questions from JSON
+
 
 // ----- LOAD QUESTIONS JSON -----
 function loadQuestionsJSON(callback) {
@@ -25,19 +30,22 @@ function loadQuestionsJSON(callback) {
         .catch(error => console.error("Error loading questions JSON:", error));
 }
 
+
 // ----- TEMPORARY FEEDBACK FUNCTION -----
 function showTempFeedback(message) {
     var feedbackEl = document.getElementById("feedback");
     feedbackEl.textContent = message;
 
-    setTimeout(function() { // Remove message after 2 seconds
+    setTimeout(function() {
         feedbackEl.textContent = "";
     }, 2000);
 }
 
+
 // ----- CLEAR SCREEN FUNCTION ----- 
 function clearScreenForNextQuestion() {
-    document.getElementById("hintModal").style.display = "none";
+
+    // Removed modal dependency (your HTML doesn’t use it anymore)
     document.getElementById("questionText").textContent = "";
     document.getElementById("storyText").textContent = "";
     document.getElementById("optionsContainer").innerHTML = "";
@@ -47,20 +55,36 @@ function clearScreenForNextQuestion() {
     document.getElementById("hintText").textContent = "";
 }
 
-// ----- 'CHOOSE A CATEGORY' SECTION -----
+
+// ----- CHOOSE CATEGORY -----
 function chooseCategory(category) {
+
     readingMode = false;
     sustainabilityMode = false;
+    artMode = false;
 
     if (category === "reading") {
         readingMode = true;
-    } else if (category === "sustainability") {
+    } 
+    else if (category === "sustainability") {
         sustainabilityMode = true;
+    }
+    else if (category === "art") {
+        artMode = true;
+
+        document.getElementById("menuScreen").style.display = "none";
+        document.getElementById("artScreen").style.display = "block";
+
+        // Load your pixel grid
+        createGrid(16,16);
+
+        return;
     }
 
     document.getElementById("menuScreen").style.display = "none";
     document.getElementById("levelScreen").style.display = "block";
 }
+
 
 // ----- TIMER (FOR HARD LEVELS) -----
 function startTimer() {
@@ -84,31 +108,26 @@ function startTimer() {
 
 // ----- LOAD QUESTION -----
 function loadQuestion() {
-    clearScreenForNextQuestion(); // clear old data
+    clearScreenForNextQuestion();
 
     answered = false;
     var q = questions[currentQuestionIndex];
 
     document.getElementById("questionText").textContent = q.question || "";
-    
+
     if (readingMode && q.story) {
         document.getElementById("storyText").textContent = q.story;
     }
 
-    document.getElementById("hintText").textContent = "";
-    document.getElementById("optionsContainer").innerHTML = "";
-    document.getElementById("answerInput").value = "";
-
-
-    // Sustainability buttons
+    // Sustainability mode (MC buttons)
     if (sustainabilityMode) {
+
         document.getElementById("answerInput").style.display = "none";
         document.getElementById("submitButton").style.display = "none";
         document.getElementById("hintButton").style.display = "none";
 
         correctIndex = q.correct;
 
-        // Create MC buttons
         for (let i = 0; i < q.options.length; i++) {
             let btn = document.createElement("button");
             btn.textContent = q.options[i];
@@ -123,10 +142,10 @@ function loadQuestion() {
         }
 
     } else {
+
         document.getElementById("answerInput").style.display = "inline";
         document.getElementById("submitButton").style.display = "inline";
         document.getElementById("hintButton").style.display = "inline";
-        document.getElementById("hintButton").disabled = false;
     }
 
     // Timer
@@ -138,45 +157,28 @@ function loadQuestion() {
     }
 }
 
-// ----- SHUFFLE ARRAY (FOR READING CATEGORY) -----
+
+// ----- SHUFFLE ARRAY -----
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
-        // Pick a random index from 0 to i
         let j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
 
+
 // ----- SET LEVEL -----
 function setLevel(level) {
+
     currentLevel = level;
     currentQuestionIndex = 0;
     score = 0;
 
-    document.getElementById("feedback").textContent = "";
-    document.getElementById("answerInput").value = "";
-    document.getElementById("answerInput").style.display = "inline";
-    document.getElementById("storyText").textContent = "";
-
-    
-    // Show/hide buttons appropriately
-    if (sustainabilityMode) {
-        document.getElementById("submitButton").style.display = "none";
-        document.getElementById("hintButton").style.display = "none";
-        document.getElementById("answerInput").style.display = "none";
-        document.getElementById("skipButton").style.display = "none";
-    } else {
-        document.getElementById("submitButton").style.display = "inline";
-        document.getElementById("hintButton").style.display = "inline";
-        document.getElementById("answerInput").style.display = "inline";
-        document.getElementById("skipButton").style.display = "inline";
-    }
-
-// ----- LOAD QUESTIONS FROM JSON -----
-    if (readingMode) { // reading section
+    if (readingMode) {
         let storyArray = allQuestionsData.reading[level];
         shuffleArray(storyArray);
         questions = [];
+
         for (let passage of storyArray) {
             for (let q of passage.questions) {
                 questions.push({
@@ -187,7 +189,8 @@ function setLevel(level) {
                 });
             }
         }
-    } else if (sustainabilityMode) { // sustainability section
+
+    } else if (sustainabilityMode) {
         questions = allQuestionsData.sustainability[level];
     } else {
         questions = allQuestionsData.math[level];
@@ -206,54 +209,44 @@ function startGame(level) {
     document.getElementById("gameScreen").style.display = "block";
 }
 
+
 // ----- NEXT QUESTION -----
 function moveToNextQuestion() {
-    clearScreenForNextQuestion(); // clear everything on screen first before next question
+    clearScreenForNextQuestion();
     clearInterval(timer);
+
     currentQuestionIndex++;
+
     if (currentQuestionIndex >= questions.length) {
         endGame();
         return;
     }
+
     loadQuestion();
 }
 
+
 // ----- END GAME -----
 function endGame() {
+
     clearInterval(timer);
-
-    document.getElementById("questionText").textContent = "";
-    document.getElementById("answerInput").style.display = "none";
-    document.getElementById("timerText").textContent = "";
-    document.getElementById("hintText").textContent = "";
-    document.getElementById("optionsContainer").innerHTML = "";
-
-    document.getElementById("submitButton").style.display = "none";
-    document.getElementById("hintButton").style.display = "none";
-    document.getElementById("skipButton").style.display = "none"
-
-    // Update/set highscore 
 
     if (score > highScore) {
         highScore = score;
         localStorage.setItem("highScore", highScore);
     }
 
-    // Show highscore (score is already shown) 
-    document.getElementById("finalScore").textContent = "High Score: " + highScore;
+    document.getElementById("finalScore").textContent =
+        "Score: " + score + " | High Score: " + highScore;
 }
 
 
 // ----- CHECK ANSWER -----
 function checkAnswer() {
-    if (answered) {
-        return;
-    }
 
-    let userAnswer = document.getElementById("answerInput").value;
+    if (answered) return;
 
-    // make input lowercase + remove spaces
-    userAnswer = userAnswer.toLowerCase().trim();
+    let userAnswer = document.getElementById("answerInput").value.toLowerCase().trim();
 
     if (userAnswer === "") {
         showTempFeedback("Please enter an answer.");
@@ -261,45 +254,41 @@ function checkAnswer() {
     }
 
     let correct = false;
-        if (readingMode) {
-            for (let ans of questions[currentQuestionIndex].answers) {
-                if (userAnswer === ans.toLowerCase().trim()) correct = true;
-            }
-        } else {
-            if (userAnswer === questions[currentQuestionIndex].answer.toLowerCase().trim()) correct = true;
-        }
 
-        if (correct) {
-            answered = true;
-            score++;
-            updateScoreText();
-            showTempFeedback("Correct!");
-            setTimeout(moveToNextQuestion, 1500); // 1.5 seconds
-        } else {
-            showTempFeedback("Wrong answer. Try using a hint.");
+    if (readingMode) {
+        for (let ans of questions[currentQuestionIndex].answers) {
+            if (userAnswer === ans.toLowerCase().trim()) correct = true;
         }
+    } else {
+        if (userAnswer === questions[currentQuestionIndex].answer.toLowerCase().trim()) {
+            correct = true;
+        }
+    }
+
+    if (correct) {
+        answered = true;
+        score++;
+        updateScoreText();
+        showTempFeedback("Correct!");
+        setTimeout(moveToNextQuestion, 1500);
+    } else {
+        showTempFeedback("Wrong answer. Try using a hint.");
+    }
 }
 
 
 // ----- SKIP QUESTION -----
 function skipQuestion() {
-
-    clearScreenForNextQuestion();
-
-    answered = true; // Mark current question as answered
-
-    clearInterval(timer); // Stop the timer if running
-
-    showTempFeedback("Question skipped."); // Feedback to show skipping
-
+    clearInterval(timer);
+    showTempFeedback("Question skipped.");
     moveToNextQuestion();
 }
 
 
-// ----- MULTIPLE CHOICE (MC) -----
+// ----- MULTIPLE CHOICE -----
 function checkMCAnswer(index) {
-    
-    clearInterval(timer); // Stop timer immediately when user clicks
+
+    clearInterval(timer);
 
     let correctIndex = questions[currentQuestionIndex].correct;
 
@@ -308,37 +297,24 @@ function checkMCAnswer(index) {
         updateScoreText();
         showTempFeedback("Correct!");
     } else {
-        showTempFeedback("Incorrect. The correct answer is: " + questions[currentQuestionIndex].options[correctIndex]);
+        showTempFeedback("Incorrect.");
     }
 
-    // Wait 3 seconds before going to next question
-    setTimeout(function() {
-        moveToNextQuestion();  // move to next question
-        if (currentLevel === "hard") {
-            startTimer();  // restart 15-second timer for next question
-        }
-    }, 3000);
+    setTimeout(moveToNextQuestion, 2000);
 }
 
 
 // ----- SHOW HINT -----
 function showHint() {
-    let hint = questions[currentQuestionIndex].hint; // Get the current question's hint
-
-    document.getElementById("hintText").innerText = hint; // Put the hint text in the popup
-
-    document.getElementById("hintModal").style.display = "block"; // Show the popup
+    let hint = questions[currentQuestionIndex].hint;
+    document.getElementById("modalHintText").textContent = "Hint: " + hint;
+    document.getElementById("hintModal").style.display = "block";
 }
 
 // ----- CLOSE HINT -----
 function closeHint() {
-    document.getElementById("hintModal").style.display = "none"; // Hide the popup
+    document.getElementById("hintModal").style.display = "none";
 }
-
-// ----- CONNECT CLOSE BUTTON AFTER PAGE LOAD -----
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("closeHintBtn").onclick = closeHint; // When the close button is clicked, run closeHint
-});
 
 
 // ----- SCORE -----
@@ -346,33 +322,24 @@ function updateScoreText() {
     document.getElementById("scoreText").textContent = "Score: " + score;
 }
 
+
 // ----- MENU -----
 function goToMenu() {
+
     document.getElementById("menuScreen").style.display = "block";
     document.getElementById("levelScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("artScreen").style.display = "none";
 
     clearInterval(timer);
-
-    document.getElementById("questionText").textContent = "";
-    document.getElementById("storyText").textContent = ""; 
-    document.getElementById("feedback").textContent = "";
-    document.getElementById("hintText").textContent = "";
-    document.getElementById("optionsContainer").innerHTML = "";
-    document.getElementById("answerInput").value = "";
-    document.getElementById("finalScore").textContent = "";
-
-    // reset modes
-    readingMode = false;
-    sustainabilityMode = false;
 }
 
-// ----- ENTER KEY (FOR SUBMIT BUTTON)-----
+
+// ----- ENTER KEY -----
 document.addEventListener("DOMContentLoaded", function () {
-    // Load JSON first
+
     loadQuestionsJSON(function() {
-        console.log("Questions loaded!");
-        const levelButtons = document.querySelectorAll(".level-btn"); // Now enable level buttons
+        const levelButtons = document.querySelectorAll(".level-btn");
         levelButtons.forEach(btn => {
             btn.addEventListener("click", function() {
                 startGame(btn.dataset.level);
@@ -380,13 +347,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    document.getElementById("closeHintBtn").onclick = closeHint; // Hint close button
+    document.getElementById("closeHintBtn").onclick = closeHint;
 
-    var input = document.getElementById("answerInput"); // Enter key
+    var input = document.getElementById("answerInput");
     input.addEventListener("keypress", function (event) {
         if (event.key === "Enter") {
             checkAnswer();
         }
     });
 });
-
