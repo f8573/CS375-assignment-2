@@ -18,6 +18,9 @@
         .grid-cell:hover {
             filter: brightness(.75);
         }
+        .grid-cell {
+            border: 1px solid #cccccc;
+        }
     </style>
 </head>
 <body>
@@ -58,22 +61,17 @@
                             // Toggle visual state
                             cell.style.backgroundColor = 'black';
                             gridState[x][y] = 1;
-                            console.log(`gridState[${x}][${y}] = 1;`);
                         }
                         else {
                             // Untoggle visual state
                             cell.style.backgroundColor = 'white';
                             gridState[x][y] = 0;
-                            console.log(`gridState[${x}][${y}] = 0;`);
                         }
-                        // console.table(gridState); // Show the 2D array in console
-
                     });
 
                     container.appendChild(cell);
                 }
             }
-            
             return gridState;
         }
 
@@ -86,11 +84,12 @@
             for (let y = 0; y < 16; y++) { 
                 for (let x = 0; x < 16; x++) { 
                     if(myGameLogic[x][y] == 1) {
-                        stringArray = stringArray + `[${x}][${y}],`;
+                        stringArray += `[${x},${y}], `;
                     }
                 }
             }
-            console.log(myGameLogic);
+            alert("Locations in console");
+            console.log(stringArray);
         });
     </script>
 </body>
